@@ -1,9 +1,6 @@
 package com.usermanagementproject.jwtsecurity.services.impl;
 
-import com.usermanagementproject.jwtsecurity.dto.JwtAuthenticationResponse;
-import com.usermanagementproject.jwtsecurity.dto.RefreshTokenRequest;
-import com.usermanagementproject.jwtsecurity.dto.SignInRequest;
-import com.usermanagementproject.jwtsecurity.dto.SignUpRequest;
+import com.usermanagementproject.jwtsecurity.dto.*;
 import com.usermanagementproject.jwtsecurity.entity.Role;
 import com.usermanagementproject.jwtsecurity.entity.User;
 import com.usermanagementproject.jwtsecurity.repository.UserRepository;
@@ -16,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
         jwtAuthenticationResponse.setToken(jwt);
         jwtAuthenticationResponse.setRefreshToken(refreshToken);
+        jwtAuthenticationResponse.setUser(user);
 
         return jwtAuthenticationResponse;
 
@@ -68,4 +68,33 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         return null;
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public Optional<User> findById(Integer id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public User editUser(User user, EditDto updatedUser) {
+        user.setFirstName(updatedUser.getFirstName());
+        user.setLastName(updatedUser.getLastName());
+        return userRepository.save(user);
+    }
+
+
+    public void deleteUser(Integer userId) {
+
+        Optional <User> optionalUser = userRepository.findById(userId);
+        if(optionalUser.isPresent()){
+            User existingUser = optionalUser.get();
+            userRepository.delete(existingUser);
+        }
+
+    }
+
 }
