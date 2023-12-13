@@ -65,7 +65,7 @@ public class JWTServiceImpl implements JWTService {
 
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractClaim(token,Claims::getExpiration).before(new Date());
     }
 }
